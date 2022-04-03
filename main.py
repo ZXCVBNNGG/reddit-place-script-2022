@@ -294,8 +294,6 @@ class PlaceClient:
                 ws = create_connection(
                     "wss://gql-realtime-2.reddit.com/query",
                     origin="https://hot-potato.reddit.com",
-                    http_proxy_host="127.0.0.1",
-                    http_proxy_port=10809,
                 )
                 break
             except Exception:
