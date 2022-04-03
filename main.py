@@ -294,6 +294,8 @@ class PlaceClient:
                 ws = create_connection(
                     "wss://gql-realtime-2.reddit.com/query",
                     origin="https://hot-potato.reddit.com",
+                    http_proxy_host="127.0.0.1",
+                    http_proxy_port=10809,
                 )
                 break
             except Exception:
@@ -399,7 +401,7 @@ class PlaceClient:
                                 Image.open(
                                     BytesIO(
                                         requests.get(
-                                            msg["data"]["name"], stream=True
+                                            msg["data"]["name"], stream=True, proxies=self.GetRandomProxy()
                                         ).content
                                     )
                                 ),
@@ -607,7 +609,7 @@ class PlaceClient:
                                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36"
                                 }
                             )
-                            r = client.get("https://www.reddit.com/login")
+                            r = client.get("https://www.reddit.com/login", proxies=self.GetRandomProxy())
                             login_get_soup = BeautifulSoup(r.content, "html.parser")
                             csrf_token = login_get_soup.find(
                                 "input", {"name": "csrf_token"}
@@ -638,7 +640,7 @@ class PlaceClient:
                     else:
                         logger.success("Authorization successful!")
                     logger.info("Obtaining access token...")
-                    r = client.get("https://new.reddit.com/")
+                    r = client.get("https://new.reddit.com/", proxies=self.GetRandomProxy())
                     data_str = (
                         BeautifulSoup(r.content, features="html.parser")
                         .find("script", {"id": "data"})
@@ -702,9 +704,17 @@ class PlaceClient:
                     canvas = 0
                     pixel_x_start = self.pixel_x_start + current_r
                     pixel_y_start = self.pixel_y_start + current_c
-                    while pixel_x_start > 999:
+
+                    if pixel_x_start > 999 and pixel_y_start < 999:
                         pixel_x_start -= 1000
-                        canvas += 1
+                        canvas = 1
+                    elif pixel_x_start < 999 and pixel_y_start > 999:
+                        pixel_y_start -= 1000
+                        canvas = 2
+                    elif pixel_x_start > 999 and pixel_y_start > 999:
+                        pixel_y_start -= 1000
+                        pixel_x_start -= 1000
+                        canvas = 3
 
                     # draw the pixel onto r/place
                     next_pixel_placement_time = self.set_pixel_and_check_ratelimit(
