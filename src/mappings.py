@@ -8,6 +8,7 @@ class ColorMapper:
         "#FF4500": 2,  # red
         "#FFA800": 3,  # orange
         "#FFD635": 4,  # yellow
+        "#FFF8B8": 5, # pale yellow
         "#00A368": 6,  # dark green
         "#00CC78": 7,  # green
         "#7EED56": 8,  # light green
@@ -36,6 +37,7 @@ class ColorMapper:
         2: "Bright Red",
         3: "Orange",
         4: "Yellow",
+        5: "Pale Yellow",
         6: "Dark Green",
         7: "Green",
         8: "Light Green",
